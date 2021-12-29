@@ -29,13 +29,13 @@ Route::get('all-products', 'App\Http\Controllers\Controller@index');
 
 
 Route::get('test', 'App\Http\Controllers\ProductController@tt');
-
+Route::post('search','App\Http\Controllers\Controller@search');
 
 Route::middleware(['auth:sanctum'])->group(function ()
 {
     Route::post('logout',[App\Http\Controllers\API\AuthController::class,'logout']);
 
-    Route::post('search','App\Http\Controllers\Controller@search');
+    //Route::post('search','App\Http\Controllers\Controller@search');
 
     Route::get('purchase-product/{id}',[App\Http\Controllers\UserController::class,'purchase']);
     Route::post('add_cash',[App\Http\Controllers\UserController::class,'add_cash']);
