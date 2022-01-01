@@ -56,35 +56,28 @@ class Controller extends BaseController
     public function search(Request $request)
     {
         $q = $request->q ;
-        // dd($q);
-        
         if($q != "")
         {
-            // dd('ddddddddd');
-            $user = Product::where ( 'name', 'LIKE', '%' . $q . '%' )
-                        // ->select('*')
-                        ->orWhere ( 'description', 'LIKE', '%' . $q . '%' )
+            $user = Product::where ( [['name', 'LIKE', '%' . $q . '%'] , ['available' , '=' , 1]] )
+                        ->orWhere ( [['description', 'LIKE', '%' . $q . '%'] , ['available' , '=' , 1]])
                         ->get ();
-            // dd($user);
             if (count ( $user ) > 0)
             {
-                return $user;
-                // dd('enter iiiiiiiiiif') ;
-                // return view('search',compact($user));
-                // return view ( 'search' )->withDetails ( $user )->withQuery ( $q );
+
+                return response($user);
             }
-               
+            
             else
             {
-                return 'noooo item' ;
-                // dd('enter ellllllllllllllse');
-                // return view ( 'search' )->withMessage ( 'No Details found. Try to search again !' );
-                // return view('welcome'); //replace view of welcome with home page
+                return response([
+                    "message" => 'NO item found'
+                ]) ;
             }
                 
         }
-        return 'yalahoooooooooooooy' ;
-        // return view ( 'welcome' );
+        return response([
+            "message" => 'ERROR'
+        ]) ;
     }
 
 }

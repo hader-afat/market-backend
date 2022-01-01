@@ -13,16 +13,17 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $data = $request->validate([
-            'name' => 'required|string',
-            'username' => 'required|string|unique:users,username',
-            'region' => 'required|string',
-            'email' => 'required|email|unique:users,email',
-            'password' => 'required|string',
-            'image' => 'required|file',
-        ]);
-        if($data['region'] == 'cairo')
+        
+        if($request['region'] == 'cairo')
         {
+            $data = $request->validate([
+                'name' => 'required|string',
+                'username' => 'required|string|unique:users,username',
+                'region' => 'required|string',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string',
+                'image' => 'required|file',
+            ]);
             // dd($request['region']);
             $user = new User;
             $user->setConnection('mysql');
@@ -56,15 +57,27 @@ class AuthController extends Controller
             return response($response, 201);
             
         }
-        else if($data['region'] == 'giza')
+        else if($request['region'] == 'giza')
         {
+            
             $user = new User;
             $user->setConnection('mysql_2');
-            /****************image************************/
+            
+            $data = $request->validate([
+                'name' => 'required|string',
+                'username' => 'required|string|unique:users,username',
+                'region' => 'required|string',
+                'email' => 'required|email|unique:users,email',
+                'password' => 'required|string',
+                'image' => 'required|file',
+            ]);
+            $users = $user->where('email', '=', $request['email'])->first();
+            if ($users === null) {
+                    /****************image************************/
             if( $request->hasFile('image') )
             {
                 $validator_2 = $request->validate([
-                    'image' => 'mimes:jpeg,bmp,png,jpg' // Only allow .jpg, .bmp and .png file types.
+                    'image' => 'mimes:jpeg,bmp,png,jpg', // Only allow .jpg, .bmp and .png file types.
                 ]);
                 //save image in folder
                 $file_extention = $request->image->getClientOriginalExtension();
@@ -88,6 +101,13 @@ class AuthController extends Controller
                 // 'token' => $token
             ];
             return response()->json($response, 201);
+            } else 
+            {
+                return response([
+                    "message" => "The given data was invalid.",
+                    "errors" => "The email has already been taken."
+                ]);
+            }
         }
     }
 
